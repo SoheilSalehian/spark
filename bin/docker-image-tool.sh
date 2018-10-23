@@ -74,6 +74,7 @@ function build {
   local BASEDOCKERFILE=${BASEDOCKERFILE:-"$IMG_PATH/spark/Dockerfile"}
   local PYDOCKERFILE=${PYDOCKERFILE:-"$IMG_PATH/spark/bindings/python/Dockerfile"}
   local RDOCKERFILE=${RDOCKERFILE:-"$IMG_PATH/spark/bindings/R/Dockerfile"}
+  local PYCODEDIR=$(dirname "${PYDOCKERFILE}")
 
   docker build $NOCACHEARG "${BUILD_ARGS[@]}" \
     -t $(image_ref spark) \
@@ -81,11 +82,12 @@ function build {
 
   docker build $NOCACHEARG "${BINDING_BUILD_ARGS[@]}" \
     -t $(image_ref spark-py) \
-    -f "$PYDOCKERFILE" .
+    -f "$PYDOCKERFILE" "$PYCODE_DIR"
 
-  docker build $NOCACHEARG "${BINDING_BUILD_ARGS[@]}" \
-    -t $(image_ref spark-r) \
-    -f "$RDOCKERFILE" .
+  # NOTE: not running any sparkR at the moment
+  # docker build $NOCACHEARG "${BINDING_BUILD_ARGS[@]}" \
+  #   -t $(image_ref spark-r) \
+  #   -f "$RDOCKERFILE" .
 }
 
 function push {
